@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>🎰 Cassino do Sheik - Profissional</title>
+  <title>🎰 Cassino do Sheik - Top de Linha</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -97,18 +97,20 @@
 
 .confetti, .coin {
   position: absolute;
-  width: 10px;
-  height: 10px;
   border-radius: 50%;
   top: 0;
   animation: fall 2s linear forwards;
+}
+
+.confetti {
+  width: 10px;
+  height: 10px;
 }
 
 .coin {
   width: 15px;
   height: 15px;
   background: gold;
-  border-radius: 50%;
   box-shadow: 0 0 5px #ff0;
 }
 
@@ -125,7 +127,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: sway 2s ease-in-out infinite;
+  transition: transform 0.5s;
 }
 
 .stickman-head {
@@ -150,12 +152,6 @@
   width: 5px;
   height: 50px;
   background: #000;
-}
-
-@keyframes sway {
-  0% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(-10deg); }
 }
 
 .lights {
@@ -203,7 +199,7 @@
     </div>
     <div class="message" id="mensagem">Toque para girar</div>
     <button class="btn-spin" onclick="girar()">GIRAR</button>
-  </div>  <div class="stickman">
+  </div>  <div class="stickman" id="stickman">
     <div class="stickman-head">
       <div class="stickman-hat"></div>
     </div>
@@ -217,6 +213,7 @@
   const simbolos = ["🐻", "👓", "🍀", "⭐", "💎", "🍒", "🍌", "🍉", "💰"];
   const reels = document.querySelectorAll('.reel');
   const mensagem = document.getElementById('mensagem');
+  const stickman = document.getElementById('stickman');
   const somGiro = document.getElementById('somGiro');
   const somVitoria = document.getElementById('somVitoria');
   const somMoeda = document.getElementById('somMoeda');
@@ -259,7 +256,7 @@
 
   function girar() {
     somGiro.currentTime = 0;
-    somGiro.play().catch(e=>console.log('Erro ao tocar som:',e));
+    somGiro.play().catch(e=>console.log(e));
     mensagem.textContent = 'Girando... 🎰';
 
     const finalSymbols = Array.from({length: 8}, () => simbolos[Math.floor(Math.random()*simbolos.length)]);
@@ -289,8 +286,14 @@
         somVitoria.play().catch(e=>console.log('Erro ao tocar som:',e));
         createConfetti();
         createCoins();
+        // Stickman 👍
+        stickman.style.transform = 'rotate(0deg) scale(1.2)';
       } else {
         mensagem.textContent = '😅 Nada feito, tente novamente';
+        // Stickman balança a cabeça
+        stickman.style.transform = 'rotate(-20deg)';
+        setTimeout(()=>{ stickman.style.transform = 'rotate(20deg)'; },200);
+        setTimeout(()=>{ stickman.style.transform = 'rotate(0deg)'; },400);
       }
     },2500);
   }
