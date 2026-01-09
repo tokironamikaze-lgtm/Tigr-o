@@ -8,7 +8,9 @@
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
-      background: radial-gradient(circle at top, #ffde00, #ff8c00, #ff4500);
+      background-image: url('https://images.unsplash.com/photo-1601312371667-5f511f77f6bb?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,7 +22,7 @@
   color: #fff;
   text-shadow: 0 0 10px #fff, 0 0 20px #ff0, 0 0 30px #f80;
   animation: neon 1.5s ease-in-out infinite alternate;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -30,10 +32,11 @@
 }
 
 .slot-container {
-  background: linear-gradient(to bottom, #222, #555);
+  background: rgba(0,0,0,0.7);
   border-radius: 25px;
   padding: 20px;
   box-shadow: 0 0 30px #000;
+  position: relative;
 }
 
 .reels {
@@ -53,11 +56,12 @@
   justify-content: center;
   font-size: 2rem;
   box-shadow: inset 0 0 10px #000, 0 0 15px #ff0;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .reel.highlight {
   animation: pulse 0.7s infinite;
+  box-shadow: 0 0 20px #fff, 0 0 30px #ff0;
 }
 
 @keyframes pulse {
@@ -91,22 +95,102 @@
   box-shadow: 0 0 20px #fff;
 }
 
-.confetti {
+.confetti, .coin {
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: gold;
+  border-radius: 50%;
   top: 0;
   animation: fall 2s linear forwards;
+}
+
+.coin {
+  width: 15px;
+  height: 15px;
+  background: gold;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ff0;
 }
 
 @keyframes fall {
   to { transform: translateY(600px) rotate(720deg); opacity: 0; }
 }
 
+.stickman {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 60px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: sway 2s ease-in-out infinite;
+}
+
+.stickman-head {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ffe0bd;
+  position: relative;
+}
+
+.stickman-hat {
+  width: 40px;
+  height: 20px;
+  background: black;
+  border-radius: 5px;
+  position: absolute;
+  top: -20px;
+  left: -5px;
+}
+
+.stickman-body {
+  width: 5px;
+  height: 50px;
+  background: #000;
+}
+
+@keyframes sway {
+  0% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+.lights {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.light {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: yellow;
+  box-shadow: 0 0 10px yellow;
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+.scoreboard {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 3px #000;
+  text-align: center;
+}
+
   </style>
 </head>
-<body>  <h1 class="casino-title">🎰 Cassino do Sheik 🎰</h1>  <div class="slot-container">
+<body>  <h1 class="casino-title">🎰 Cassino do Sheik 🎰</h1>  <div class="scoreboard" id="scoreboard">Vitórias: 0 | Moedas: 0</div>  <div class="slot-container">
     <div class="reels" id="reels">
       <div class="reel">🐻</div>
       <div class="reel">👓</div>
@@ -119,17 +203,37 @@
     </div>
     <div class="message" id="mensagem">Toque para girar</div>
     <button class="btn-spin" onclick="girar()">GIRAR</button>
-  </div><audio id="somGiro" src="https://www.soundjay.com/misc/sounds/casino-slot-1.mp3"></audio> <audio id="somVitoria" src="https://www.soundjay.com/misc/sounds/coin-drop-1.mp3"></audio>
+  </div>  <div class="stickman">
+    <div class="stickman-head">
+      <div class="stickman-hat"></div>
+    </div>
+    <div class="stickman-body"></div>
+  </div>  <div class="lights" id="lights"></div><audio id="somGiro" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio> <audio id="somVitoria" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio> <audio id="somMoeda" src="https://www.soundjay.com/money/sounds/coin-1.mp3" preload="auto"></audio>
 
 <script>
+  let vitorias = 0;
+  let moedas = 0;
+
   const simbolos = ["🐻", "👓", "🍀", "⭐", "💎", "🍒", "🍌", "🍉", "💰"];
   const reels = document.querySelectorAll('.reel');
   const mensagem = document.getElementById('mensagem');
   const somGiro = document.getElementById('somGiro');
   const somVitoria = document.getElementById('somVitoria');
+  const somMoeda = document.getElementById('somMoeda');
+  const scoreboard = document.getElementById('scoreboard');
+
+  const lightsContainer = document.getElementById('lights');
+  for(let i=0;i<30;i++){
+    const l = document.createElement('div');
+    l.classList.add('light');
+    l.style.top = Math.random()*window.innerHeight+'px';
+    l.style.left = Math.random()*window.innerWidth+'px';
+    l.style.animationDuration = (0.5 + Math.random())+'s';
+    lightsContainer.appendChild(l);
+  }
 
   function createConfetti() {
-    for(let i=0;i<30;i++){
+    for(let i=0;i<50;i++){
       const c = document.createElement('div');
       c.classList.add('confetti');
       c.style.left = Math.random()*window.innerWidth+'px';
@@ -140,9 +244,22 @@
     }
   }
 
+  function createCoins() {
+    for(let i=0;i<30;i++){
+      const coin = document.createElement('div');
+      coin.classList.add('coin');
+      coin.style.left = Math.random()*window.innerWidth+'px';
+      coin.style.animationDuration = 1 + Math.random()*1.5 + 's';
+      document.body.appendChild(coin);
+      somMoeda.currentTime = 0;
+      somMoeda.play().catch(e=>console.log(e));
+      setTimeout(()=>coin.remove(),2000);
+    }
+  }
+
   function girar() {
     somGiro.currentTime = 0;
-    somGiro.play();
+    somGiro.play().catch(e=>console.log('Erro ao tocar som:',e));
     mensagem.textContent = 'Girando... 🎰';
 
     const finalSymbols = Array.from({length: 8}, () => simbolos[Math.floor(Math.random()*simbolos.length)]);
@@ -165,9 +282,13 @@
       const todosIguais = finalSymbols.every(s => s === finalSymbols[0]);
       if(todosIguais){
         mensagem.textContent = '💖 TODOS IGUAIS! GRANDE PRÊMIO!';
+        vitorias++;
+        moedas += 100;
+        scoreboard.textContent = `Vitórias: ${vitorias} | Moedas: ${moedas}`;
         somVitoria.currentTime = 0;
-        somVitoria.play();
+        somVitoria.play().catch(e=>console.log('Erro ao tocar som:',e));
         createConfetti();
+        createCoins();
       } else {
         mensagem.textContent = '😅 Nada feito, tente novamente';
       }
