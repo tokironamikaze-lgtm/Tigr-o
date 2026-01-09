@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>🐻🎰 Jogo do Ursinho</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-500 via-orange-500 to-red-600">  <div class="bg-white rounded-2xl shadow-2xl p-6 w-80 text-center">
+    <h1 class="text-2xl font-bold mb-4">🐻🎰 Jogo do Ursinho</h1><div class="flex justify-center gap-3 mb-4 text-5xl" id="reels">
+  <div class="bg-yellow-100 rounded-xl w-16 h-20 flex items-center justify-center">🐻</div>
+  <div class="bg-yellow-100 rounded-xl w-16 h-20 flex items-center justify-center">👓</div>
+  <div class="bg-yellow-100 rounded-xl w-16 h-20 flex items-center justify-center">🐻</div>
+</div>
+
+<p class="mb-4 font-semibold" id="mensagem">Toque para girar</p>
+
+<button onclick="girar()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-xl w-full">
+  Girar
+</button>
+
+<p class="text-xs text-gray-500 mt-4">Simulador educativo • sem dinheiro real</p>
+
+  </div><script>
+  const simbolos = ["🐻", "👓", "🍀", "⭐", "💎"];
+  const reels = document.getElementById("reels");
+  const mensagem = document.getElementById("mensagem");
+
+  function girar() {
+    const novo = [
+      simbolos[Math.floor(Math.random() * simbolos.length)],
+      simbolos[Math.floor(Math.random() * simbolos.length)],
+      simbolos[Math.floor(Math.random() * simbolos.length)]
+    ];
+
+    reels.children[0].textContent = novo[0];
+    reels.children[1].textContent = novo[1];
+    reels.children[2].textContent = novo[2];
+
+    if (novo[0] === "🐻" && novo[1] === "👓" && novo[2] === "🐻") {
+      mensagem.textContent = "💖 URSO + JULIETA! GRANDE PRÊMIO!";
+    } else if (novo[0] === novo[1] && novo[1] === novo[2]) {
+      mensagem.textContent = "🎉 Combinação perfeita!";
+    } else {
+      mensagem.textContent = "😅 Nada feito, tente novamente";
+    }
+  }
+</script></body>
+</html>
