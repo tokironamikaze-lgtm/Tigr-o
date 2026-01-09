@@ -1,88 +1,177 @@
 <!DOCTYPE html><html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>🎰 Cassino do Sheik</title>
+  <meta charset="UTF-8">
+  <title>🎰 Cassino do Sheik - Profissional</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    body { background: linear-gradient(to bottom right, #FFD700, #FF8C00, #FF4500); }
-    .reel {
-      transition: transform 0.2s ease-in-out;
-      font-size: 2.5rem;
-    }
-    .highlight {
-      animation: pulse 0.6s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.4); }
-      100% { transform: scale(1); }
-    }
-    .casino-title {
-      font-size: 3rem;
-      font-weight: bold;
-      text-shadow: 2px 2px #000;
-      margin-bottom: 20px;
-    }
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at top, #ffde00, #ff8c00, #ff4500);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }.casino-title {
+  font-size: 3rem;
+  color: #fff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #ff0, 0 0 30px #f80;
+  animation: neon 1.5s ease-in-out infinite alternate;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+@keyframes neon {
+  from { text-shadow: 0 0 5px #fff, 0 0 10px #ff0, 0 0 15px #f80; }
+  to { text-shadow: 0 0 20px #fff, 0 0 30px #ff0, 0 0 40px #f80; }
+}
+
+.slot-container {
+  background: linear-gradient(to bottom, #222, #555);
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: 0 0 30px #000;
+}
+
+.reels {
+  display: grid;
+  grid-template-columns: repeat(4, 70px);
+  grid-gap: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.reel {
+  background: #fff;
+  border-radius: 15px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: inset 0 0 10px #000, 0 0 15px #ff0;
+  transition: transform 0.2s;
+}
+
+.reel.highlight {
+  animation: pulse 0.7s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.message {
+  color: #fff;
+  font-size: 1rem;
+  text-shadow: 1px 1px 3px #000;
+  min-height: 2rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.btn-spin {
+  background: #ff8c00;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #ff0;
+  transition: 0.3s;
+}
+
+.btn-spin:hover {
+  background: #ffa500;
+  box-shadow: 0 0 20px #fff;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: gold;
+  top: 0;
+  animation: fall 2s linear forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(600px) rotate(720deg); opacity: 0; }
+}
+
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center">  <h1 class="casino-title text-white">🎰 Cassino do Sheik 🎰</h1>  <div class="bg-white rounded-3xl shadow-2xl p-6 w-96 text-center">
-    <div class="grid grid-cols-4 gap-3 mb-4" id="reels">
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">🐻</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">👓</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">🍀</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">⭐</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">💎</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">🍒</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">🍌</div>
-      <div class="bg-yellow-100 rounded-xl w-16 h-16 flex items-center justify-center reel">💰</div>
-    </div><p class="mb-4 font-semibold" id="mensagem">Toque para girar</p>
-
-<button onclick="girar()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-xl w-full">
-  Girar
-</button>
-
-<p class="text-xs text-gray-500 mt-4">Simulador educativo • sem dinheiro real</p>
-
-  </div><audio id="somGiro" src="https://www.soundjay.com/misc/sounds/casino-slot-1.mp3"></audio>
+<body>  <h1 class="casino-title">🎰 Cassino do Sheik 🎰</h1>  <div class="slot-container">
+    <div class="reels" id="reels">
+      <div class="reel">🐻</div>
+      <div class="reel">👓</div>
+      <div class="reel">🍀</div>
+      <div class="reel">⭐</div>
+      <div class="reel">💎</div>
+      <div class="reel">🍒</div>
+      <div class="reel">🍌</div>
+      <div class="reel">💰</div>
+    </div>
+    <div class="message" id="mensagem">Toque para girar</div>
+    <button class="btn-spin" onclick="girar()">GIRAR</button>
+  </div><audio id="somGiro" src="https://www.soundjay.com/misc/sounds/casino-slot-1.mp3"></audio> <audio id="somVitoria" src="https://www.soundjay.com/misc/sounds/coin-drop-1.mp3"></audio>
 
 <script>
   const simbolos = ["🐻", "👓", "🍀", "⭐", "💎", "🍒", "🍌", "🍉", "💰"];
   const reels = document.querySelectorAll('.reel');
-  const mensagem = document.getElementById("mensagem");
-  const somGiro = document.getElementById("somGiro");
+  const mensagem = document.getElementById('mensagem');
+  const somGiro = document.getElementById('somGiro');
+  const somVitoria = document.getElementById('somVitoria');
+
+  function createConfetti() {
+    for(let i=0;i<30;i++){
+      const c = document.createElement('div');
+      c.classList.add('confetti');
+      c.style.left = Math.random()*window.innerWidth+'px';
+      c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+      c.style.animationDuration = 1 + Math.random()*1.5 + 's';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),2000);
+    }
+  }
 
   function girar() {
     somGiro.currentTime = 0;
     somGiro.play();
+    mensagem.textContent = 'Girando... 🎰';
 
-    mensagem.textContent = "Girando... 🎰";
+    const finalSymbols = Array.from({length: 8}, () => simbolos[Math.floor(Math.random()*simbolos.length)]);
 
-    const finalSymbols = Array.from({length: 8}, () => simbolos[Math.floor(Math.random() * simbolos.length)]);
-
-    reels.forEach((reel, index) => {
-      let i = 0;
-      const interval = setInterval(() => {
-        reel.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+    reels.forEach((reel,index)=>{
+      let i=0;
+      const interval = setInterval(()=>{
+        reel.textContent = simbolos[Math.floor(Math.random()*simbolos.length)];
         i++;
-        if(i > 20 + index*5) { // rolos param em tempos diferentes
+        if(i>20 + index*5){
           clearInterval(interval);
           reel.textContent = finalSymbols[index];
           reel.classList.add('highlight');
-          setTimeout(() => reel.classList.remove('highlight'), 1200);
+          setTimeout(()=>reel.classList.remove('highlight'),1200);
         }
-      }, 70);
+      },70);
     });
 
-    setTimeout(() => {
-      // verifica se todos os símbolos são iguais
+    setTimeout(()=>{
       const todosIguais = finalSymbols.every(s => s === finalSymbols[0]);
-      if(todosIguais) {
-        mensagem.textContent = `💖 TODOS IGUAIS! GRANDE PRÊMIO!`;
+      if(todosIguais){
+        mensagem.textContent = '💖 TODOS IGUAIS! GRANDE PRÊMIO!';
+        somVitoria.currentTime = 0;
+        somVitoria.play();
+        createConfetti();
       } else {
-        mensagem.textContent = `😅 Nada feito, tente novamente`;
+        mensagem.textContent = '😅 Nada feito, tente novamente';
       }
-    }, 2500);
+    },2500);
   }
 </script></body>
 </html>
